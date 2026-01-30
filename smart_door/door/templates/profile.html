@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Door - My Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: #334155;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .nav {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: var(--text);
+        }
+
+        .profile-card {
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .avatar-container {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            overflow: hidden;
+            border: 4px solid var(--primary);
+            background-color: var(--input-bg);
+        }
+
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        h2 {
+            margin: 0 0 0.5rem;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .status-approved {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            text-align: left;
+            margin-bottom: 2.5rem;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-item span {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--input-bg);
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: #3d4b5f;
+        }
+
+        .voice-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="nav">
+        <a href="{% url 'dashboard' %}">← Back to Dashboard</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+
+    <div class="profile-card">
+        <div class="avatar-container">
+            {% if user.profile_image %}
+            <img src="{{ user.profile_image.url }}" alt="Profile Image">
+            {% else %}
+            <div style="display:flex; align-items:center; justify-content:center; height:100%; font-size:3rem;">👤</div>
+            {% endif %}
+        </div>
+
+        <h2>{{ user.full_name|default:user.username }}</h2>
+        <div class="status-badge {% if user.is_approved %}status-approved{% else %}status-pending{% endif %}">
+            {% if user.is_approved %}● Approved{% else %}● Approval Pending{% endif %}
+        </div>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Username</label>
+                <span>{{ user.username }}</span>
+            </div>
+            <div class="info-item">
+                <label>Email</label>
+                <span>{{ user.email }}</span>
+            </div>
+            <div class="info-item">
+                <label>Phone</label>
+                <span>{{ user.phone_number|default:"Not provided" }}</span>
+            </div>
+            <div class="info-item">
+                <label>Address</label>
+                <span>{{ user.address|default:"Not provided" }}</span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Control Door</a>
+        </div>
+
+        {% if user.voice_recording %}
+        <a href="{{ user.voice_recording.url }}" class="voice-link">
+            <span>🎤 Listen to saved voice sample</span>
+        </a>
+        {% endif %}
+    </div>
+</body>
+
+</html>

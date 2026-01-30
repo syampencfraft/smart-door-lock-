@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Door - Edit Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: #334155;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-weight: 600;
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid transparent;
+            background-color: var(--input-bg);
+            color: var(--text);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .media-section {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .media-card {
+            flex: 1;
+            background: var(--input-bg);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            border: 2px dashed #475569;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .media-card:hover {
+            border-color: var(--primary);
+            background: #3d4b5f;
+        }
+
+        .media-card.captured {
+            border-style: solid;
+            border-color: #10b981;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        button.btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--text-muted);
+        }
+
+        .btn-secondary:hover {
+            color: var(--text);
+            border-color: var(--text);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Edit Profile</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="full_name" value="{{ user.full_name|default:'' }}" placeholder="Your full name"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" value="{{ user.email }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone_number" value="{{ user.phone_number|default:'' }}"
+                    placeholder="+1234567890">
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <textarea name="address" rows="2"
+                    placeholder="Your residential address">{{ user.address|default:'' }}</textarea>
+            </div>
+
+            <div class="media-section">
+                <div class="media-card" id="imgCard" onclick="document.getElementById('imgInput').click()">
+                    <span>🔄 Update Image</span>
+                    <input type="file" name="profile_image" id="imgInput" hidden accept="image/*"
+                        onchange="updateStatus(this, 'imgCard')">
+                </div>
+                <div class="media-card" id="voiceCard" onclick="document.getElementById('voiceInput').click()">
+                    <span>🔄 Update Voice</span>
+                    <input type="file" name="voice_recording" id="voiceInput" hidden accept="audio/*"
+                        onchange="updateStatus(this, 'voiceCard')">
+                </div>
+            </div>
+
+            <div class="actions">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function updateStatus(input, cardId) {
+            const card = document.getElementById(cardId);
+            if (input.files && input.files[0]) {
+                card.classList.add('captured');
+                card.querySelector('span').innerText = (cardId === 'imgCard' ? '✅ New Image Set' : '✅ New Voice Set');
+            }
+        }
+    </script>
+</body>
+
+</html>

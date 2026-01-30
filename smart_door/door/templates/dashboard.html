@@ -1,3 +1,222 @@
-<h2>Welcome {{ user.username }}</h2>
-<p>Login successful</p>
-<p>Next: Face & Voice Authentication</p>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Door - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: #334155;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: var(--card-bg);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            flex: 1;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--text);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 3rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
+            background: var(--card-bg);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .user-pill img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
+            padding: 3rem;
+            border-radius: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card h1 {
+            margin: 0 0 1rem;
+            font-size: 2rem;
+        }
+
+        .hero-card p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.125rem;
+        }
+
+        .door-control {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .door-status {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .btn-unlock {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-unlock:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <span>🛡️</span> SmartDoor
+        </div>
+        <div class="nav-links">
+            <a href="{% url 'dashboard' %}" class="nav-link active">🏠 Dashboard</a>
+            <a href="{% url 'profile' %}" class="nav-link">👤 My Profile</a>
+            <a href="#" class="nav-link">🔔 Notifications</a>
+            <a href="#" class="nav-link">⚙️ Settings</a>
+        </div>
+        <a href="{% url 'logout' %}" class="nav-link" style="color: var(--error);">🚪 Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h2 style="margin:0;">Dashboard</h2>
+                <p style="margin:0.25rem 0 0; color:var(--text-muted); font-size:0.875rem;">Welcome back, {{
+                    user.full_name|default:user.username }}</p>
+            </div>
+            <a href="{% url 'profile' %}" class="user-pill">
+                {% if user.profile_image %}
+                <img src="{{ user.profile_image.url }}" alt="">
+                {% else %}
+                <span>👤</span>
+                {% endif %}
+                <span>{{ user.username }}</span>
+            </a>
+        </div>
+
+        <div class="hero-card">
+            <h1>Ready to Secure</h1>
+            <p>Your smart security system is online and protecting your home.</p>
+        </div>
+
+        <div class="door-control">
+            <div class="door-status">
+                <div class="status-indicator"></div>
+                System Active & Secure
+            </div>
+            <button class="btn-unlock" onclick="window.location.href='{% url 'verify_biometrics' %}';">🔓 Start
+                Authentication</button>
+            <p style="margin-top:2rem; color:var(--text-muted); font-size:0.875rem;">Next: Real-time Face & Voice
+                Verification</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,10 +1,348 @@
-<h2>Register</h2>
-<form method="POST">
-    {% csrf_token %}
-    <input type="text" name="username" placeholder="Username" required><br>
-    <input type="email" name="email" placeholder="Email" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <input type="password" name="confirm" placeholder="Confirm Password" required><br>
-    <button type="submit">Register</button>
-</form>
-<p style="color:red;">{{ error }}</p>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Door - Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --input-bg: #334155;
+            --error: #ef4444;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-weight: 600;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid transparent;
+            background-color: var(--input-bg);
+            color: var(--text);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .media-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            grid-column: span 2;
+        }
+
+        .media-container {
+            background: var(--input-bg);
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            border: 2px dashed #475569;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .media-container.active {
+            border-color: var(--primary);
+        }
+
+        .media-container.ready {
+            border-style: solid;
+            border-color: var(--success);
+        }
+
+        .preview-box {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #000;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        video,
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        video {
+            transform: scaleX(-1);
+        }
+
+        .media-btn {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .media-btn.stop {
+            background: var(--error);
+        }
+
+        button.submit-btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            grid-column: span 2;
+        }
+
+        button.submit-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .error-msg {
+            color: var(--error);
+            font-size: 0.875rem;
+            text-align: center;
+            margin-top: 1rem;
+            grid-column: span 2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Smart Door Registration</h2>
+        <form method="POST" enctype="multipart/form-data" id="regForm" class="form-grid">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Pick a username" required>
+            </div>
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="full_name" placeholder="Your full name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="example@mail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone_number" placeholder="+1234567890" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Address</label>
+                <textarea name="address" rows="1" placeholder="Your residential address" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" name="confirm" placeholder="••••••••" required>
+            </div>
+
+            <div class="media-section">
+                <!-- Face Registration -->
+                <div class="media-container" id="faceContainer">
+                    <label>📸 Face Registry</label>
+                    <div class="preview-box">
+                        <video id="webcam" autoplay muted playsinline></video>
+                        <img id="facePreview" style="display:none;">
+                    </div>
+                    <button type="button" class="media-btn" id="faceBtn" onclick="toggleCamera()">OPEN CAMERA</button>
+                    <input type="file" name="profile_image" id="profile_image" hidden>
+                </div>
+
+                <!-- Voice Registration -->
+                <div class="media-container" id="voiceContainer">
+                    <label>🎤 Voice Registry</label>
+                    <div class="preview-box"
+                        style="display: flex; align-items: center; justify-content: center; background: #1e293b;">
+                        <span id="voiceStatus" style="font-size: 3rem;">🎤</span>
+                    </div>
+                    <button type="button" class="media-btn" id="voiceBtn" onclick="toggleVoice()">START
+                        RECORDING</button>
+                    <input type="file" name="voice_recording" id="voice_recording" hidden>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Create Account</button>
+
+            {% if error %}
+            <div class="error-msg">{{ error }}</div>
+            {% endif %}
+        </form>
+    </div>
+
+    <script>
+        const webcam = document.getElementById('webcam');
+        const facePreview = document.getElementById('facePreview');
+        const faceBtn = document.getElementById('faceBtn');
+        const faceContainer = document.getElementById('faceContainer');
+        const profileInput = document.getElementById('profile_image');
+
+        const voiceBtn = document.getElementById('voiceBtn');
+        const voiceStatus = document.getElementById('voiceStatus');
+        const voiceContainer = document.getElementById('voiceContainer');
+        const voiceInput = document.getElementById('voice_recording');
+
+        let stream;
+        let recorder;
+        let chunks = [];
+        let isCamOpen = false;
+        let isRecording = false;
+
+        async function toggleCamera() {
+            if (!isCamOpen) {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    webcam.srcObject = stream;
+                    webcam.style.display = 'block';
+                    facePreview.style.display = 'none';
+                    faceBtn.innerText = 'SNAP PHOTO';
+                    isCamOpen = true;
+                    faceContainer.classList.add('active');
+                } catch (e) {
+                    alert("Camera access denied");
+                }
+            } else {
+                capturePhoto();
+            }
+        }
+
+        function capturePhoto() {
+            const canvas = document.createElement('canvas');
+            canvas.width = webcam.videoWidth;
+            canvas.height = webcam.videoHeight;
+            canvas.getContext('2d').drawImage(webcam, 0, 0);
+
+            const dataUrl = canvas.toDataURL('image/jpeg');
+            facePreview.src = dataUrl;
+            facePreview.style.display = 'block';
+            webcam.style.display = 'none';
+            faceBtn.innerText = 'RETAKE PHOTO';
+            isCamOpen = false;
+            faceContainer.classList.add('ready');
+
+            // Convert to file for Django
+            fetch(dataUrl).then(res => res.blob()).then(blob => {
+                const file = new File([blob], "profile.jpg", { type: "image/jpeg" });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                profileInput.files = dataTransfer.files;
+            });
+        }
+
+        async function toggleVoice() {
+            if (!isRecording) {
+                if (!stream) {
+                    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                }
+                chunks = [];
+                recorder = new MediaRecorder(stream);
+                recorder.ondataavailable = e => chunks.push(e.data);
+                recorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: 'audio/wav' });
+                    const file = new File([blob], "voice.wav", { type: "audio/wav" });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    voiceInput.files = dataTransfer.files;
+
+                    voiceStatus.innerText = '✅';
+                    voiceContainer.classList.add('ready');
+                };
+                recorder.start();
+                voiceBtn.innerText = 'STOP RECORDING';
+                voiceBtn.classList.add('stop');
+                voiceStatus.innerText = '🔴';
+                isRecording = true;
+            } else {
+                recorder.stop();
+                voiceBtn.innerText = 'RERECORD';
+                voiceBtn.classList.remove('stop');
+                isRecording = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

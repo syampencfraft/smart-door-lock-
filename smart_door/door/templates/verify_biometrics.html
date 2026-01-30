@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Door - Biometric Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            /* Green for security */
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --bg: #020617;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #1e293b 0%, #020617 100%);
+        }
+
+        .terminal-container {
+            width: 100%;
+            max-width: 800px;
+            aspect-ratio: 16/9;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .terminal-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-pill {
+            padding: 0.25rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 var(--primary-glow);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .main-stage {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .verification-step {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .verification-step.active {
+            display: flex;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Step 1: Face Scan */
+        #video-container {
+            position: relative;
+            width: 480px;
+            height: 320px;
+            background: #000;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 1.5rem;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .scan-overlay {
+            position: absolute;
+            inset: 0;
+            border: 2px dashed rgba(16, 185, 129, 0.3);
+            border-radius: 1rem;
+            pointer-events: none;
+        }
+
+        .scanning-line {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+            z-index: 10;
+            top: 0;
+            animation: scan 3s infinite linear;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0;
+            }
+
+            100% {
+                top: 100%;
+            }
+        }
+
+        /* Step 2: Voice Test */
+        .voice-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 1.5rem;
+            padding: 3rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .mic-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-top: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* Success Overlay */
+        .success-page {
+            position: absolute;
+            inset: 0;
+            background: var(--primary);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            border-radius: 2rem;
+            color: #fff;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 3rem;
+            border-radius: 1rem;
+            font-weight: 600;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: #059669;
+            transform: scale(1.05);
+        }
+
+        .btn:disabled {
+            background: #334155;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .instruction {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <h3 style="margin:0; font-weight: 600;">🛡️ BIO-TERMINAL 5.0</h3>
+            <div id="sys-status" class="status-pill">System Ready</div>
+        </div>
+
+        <div class="main-stage">
+            <!-- Step 1: Face -->
+            <div id="step-face" class="verification-step active">
+                <div id="video-container">
+                    <video id="webcam" autoplay muted playsinline></video>
+                    <div class="scan-overlay"></div>
+                    <div class="scanning-line" id="scan-line"></div>
+                </div>
+                <button class="btn" id="capture-btn" onclick="captureFace()">START SCAN</button>
+                <div class="instruction" id="face-hint">Ensure your face is clearly visible</div>
+            </div>
+
+            <!-- Step 2: Voice -->
+            <div id="step-voice" class="verification-step">
+                <div class="voice-card">
+                    <div class="mic-icon" id="mic-icon">🎤</div>
+                    <h2 style="margin:0;">Voice Registry</h2>
+                    <p style="color:var(--text-muted); margin-top:0.5rem;">Speak clearly: "Unlock the door now"</p>
+                    <div class="progress-bar-container" style="display: none;">
+                        <div class="progress-bar" id="v-progress"></div>
+                    </div>
+                    <button class="btn" id="voice-btn" onclick="toggleVoiceRecording()" style="margin-top: 2rem;">START
+                        RECORDING</button>
+                    <div class="instruction" id="voice-hint">Click button to begin recording</div>
+                </div>
+            </div>
+
+            <!-- Success -->
+            <div id="success-screen" class="success-page">
+                <div style="font-size: 5rem; margin-bottom: 1rem;">🔓</div>
+                <h1 style="font-size: 2.5rem; margin:0;">ACCESS GRANTED</h1>
+                <p style="opacity: 0.9;">Identity verified. Welcome back.</p>
+                <button class="btn" style="background: #fff; color: var(--primary); margin-top: 2rem;"
+                    onclick="window.location.href='{% url 'dashboard' %}'">ENTER SYSTEM</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('webcam');
+        const status = document.getElementById('sys-status');
+        const faceHint = document.getElementById('face-hint');
+        const captureBtn = document.getElementById('capture-btn');
+        const scanLine = document.getElementById('scan-line');
+        const vProgress = document.getElementById('v-progress');
+
+        const stepFace = document.getElementById('step-face');
+        const stepVoice = document.getElementById('step-voice');
+        const successScreen = document.getElementById('success-screen');
+        const micIcon = document.getElementById('mic-icon');
+        const voiceBtn = document.getElementById('voice-btn');
+        const voiceHint = document.getElementById('voice-hint');
+
+        let isVerifying = false;
+        let authStream;
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+
+        async function init() {
+            try {
+                authStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                video.srcObject = authStream;
+            } catch (err) {
+                console.error("Camera Error:", err);
+                alert("Terminal Error: Camera/Microphone access required.");
+            }
+        }
+
+        async function captureFace() {
+            if (isVerifying) return;
+
+            isVerifying = true;
+            captureBtn.disabled = true;
+            captureBtn.innerText = "MATCHING...";
+            scanLine.style.display = "block";
+
+            status.innerText = "AUTHENTICATING...";
+            status.style.color = "#f59e0b";
+            status.style.borderColor = "#f59e0b";
+            faceHint.innerText = "CAPTURING IMAGE...";
+
+            // Capture Frame
+            const offscreenCanvas = document.createElement('canvas');
+            offscreenCanvas.width = video.videoWidth;
+            offscreenCanvas.height = video.videoHeight;
+            const ctx = offscreenCanvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            const imageData = offscreenCanvas.toDataURL('image/jpeg');
+
+            try {
+                const res = await fetch("{% url 'verify_biometrics' %}", {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ 'type': 'face', 'image': imageData })
+                }).then(r => r.json());
+
+                if (res.success) {
+                    goToVoice();
+                } else {
+                    status.innerText = "ACCESS DENIED";
+                    status.style.color = "var(--error)";
+                    status.style.borderColor = "var(--error)";
+                    faceHint.innerText = res.message || "IDENTITY MISMATCH. RETRYING...";
+
+                    // Reset after 3 seconds
+                    setTimeout(() => {
+                        isVerifying = false;
+                        captureBtn.disabled = false;
+                        captureBtn.innerText = "START SCAN";
+                        scanLine.style.display = "none";
+                        status.innerText = "System Ready";
+                        status.style.color = "var(--primary)";
+                        status.style.borderColor = "var(--primary)";
+                        faceHint.innerText = "Ensure your face is clearly visible";
+                    }, 3000);
+                }
+            } catch (e) {
+                console.error("Verification error:", e);
+                isVerifying = false;
+                captureBtn.disabled = false;
+                captureBtn.innerText = "START SCAN";
+                scanLine.style.display = "none";
+            }
+        }
+
+        function goToVoice() {
+            stepFace.classList.remove('active');
+            stepVoice.classList.add('active');
+            status.innerText = "VOICE IDENT: READY";
+            status.style.color = "var(--primary)";
+            status.style.borderColor = "var(--primary)";
+        }
+
+        function toggleVoiceRecording() {
+            if (!isRecording) {
+                startVoiceRecording();
+            } else {
+                stopVoiceRecording();
+            }
+        }
+
+        async function startVoiceRecording() {
+            isRecording = true;
+            audioChunks = [];
+
+            mediaRecorder = new MediaRecorder(authStream);
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+
+            mediaRecorder.onstop = async () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                verifyVoice(audioBlob);
+            };
+
+            mediaRecorder.start();
+
+            voiceBtn.innerText = "STOP & VERIFY";
+            voiceBtn.style.background = "var(--error)";
+            status.innerText = "RECORDING VOICE...";
+            voiceHint.innerText = "Speak clearly into the microphone";
+            micIcon.style.animation = "pulse 1s infinite";
+        }
+
+        function stopVoiceRecording() {
+            isRecording = false;
+            mediaRecorder.stop();
+            voiceBtn.disabled = true;
+            voiceBtn.innerText = "ANALYZING...";
+            voiceBtn.style.background = "#334155";
+            micIcon.style.animation = "none";
+        }
+
+        async function verifyVoice(audioBlob) {
+            const formData = new FormData();
+            formData.append('type', 'voice');
+            formData.append('audio', audioBlob, 'voice.wav');
+
+            status.innerText = "ANALYZING VOICE PATTERN...";
+            try {
+                const res = await fetch("{% url 'verify_biometrics' %}", {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                    body: formData
+                }).then(r => r.json());
+
+                if (res.success) {
+                    successScreen.style.display = "flex";
+                } else {
+                    status.innerText = "VOICE MISMATCH";
+                    status.style.color = "var(--error)";
+                    status.style.borderColor = "var(--error)";
+                    voiceHint.innerText = res.message || "Voice does not match registered profile.";
+
+                    // Reset after 3 seconds
+                    setTimeout(() => {
+                        voiceBtn.disabled = false;
+                        voiceBtn.innerText = "START RECORDING";
+                        voiceBtn.style.background = "var(--primary)";
+                        status.innerText = "VOICE IDENT: READY";
+                        status.style.color = "var(--primary)";
+                        status.style.borderColor = "var(--primary)";
+                        voiceHint.innerText = "Click button to begin recording";
+                    }, 3000);
+                }
+            } catch (e) {
+                console.error("Voice verification error:", e);
+                status.innerText = "SERVER ERROR";
+                voiceBtn.disabled = false;
+                voiceBtn.innerText = "START RECORDING";
+                voiceBtn.style.background = "var(--primary)";
+            }
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
