@@ -4,18 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Door - Register</title>
+    <title>Register - Smart Door</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --primary: #6366f1;
             --primary-hover: #4f46e5;
             --bg: #0f172a;
-            --card-bg: #1e293b;
+            --card-bg: rgba(30, 41, 59, 0.7);
             --text: #f8fafc;
             --text-muted: #94a3b8;
-            --input-bg: #334155;
-            --error: #ef4444;
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --error: #f87171;
             --success: #10b981;
         }
 
@@ -23,38 +24,56 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg);
             color: var(--text);
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            padding: 2rem 1rem;
         }
 
         .container {
-            background-color: var(--card-bg);
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
         }
 
         h2 {
-            margin-top: 0;
+            font-size: 2rem;
             font-weight: 600;
-            text-align: center;
-            color: var(--primary);
+            margin: 0;
+            background: linear-gradient(to right, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
+            gap: 1.25rem;
         }
 
         .form-group {
-            margin-bottom: 1.25rem;
+            position: relative;
         }
 
         .full-width {
@@ -66,18 +85,34 @@
             margin-bottom: 0.5rem;
             font-size: 0.875rem;
             color: var(--text-muted);
+            padding-left: 0.5rem;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-container i:not(.password-toggle i) {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
         }
 
         input,
         textarea {
             width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border: 1px solid transparent;
-            background-color: var(--input-bg);
-            color: var(--text);
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            color: white;
             font-size: 1rem;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
             box-sizing: border-box;
         }
 
@@ -85,24 +120,47 @@
         textarea:focus {
             outline: none;
             border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+            z-index: 10;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
         }
 
         .media-section {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            grid-column: span 2;
+            gap: 1.5rem;
+            margin-top: 1rem;
         }
 
         .media-container {
-            background: var(--input-bg);
+            background: rgba(15, 23, 42, 0.4);
             border-radius: 1rem;
-            padding: 1rem;
+            padding: 1.5rem;
             text-align: center;
-            border: 2px dashed #475569;
-            transition: all 0.2s;
-            position: relative;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
         }
 
         .media-container.active {
@@ -110,118 +168,174 @@
         }
 
         .media-container.ready {
-            border-style: solid;
             border-color: var(--success);
+            border-style: solid;
         }
 
         .preview-box {
             width: 100%;
             aspect-ratio: 4/3;
             background: #000;
-            border-radius: 0.5rem;
-            margin-bottom: 0.75rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1rem;
             overflow: hidden;
-            position: relative;
-        }
-
-        video,
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        video {
-            transform: scaleX(-1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .media-btn {
             width: 100%;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            border: none;
+            padding: 0.75rem;
+            border-radius: 0.6rem;
             background: var(--primary);
             color: white;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.875rem;
+            border: none;
+            transition: all 0.2s;
         }
 
         .media-btn.stop {
             background: var(--error);
         }
 
-        button.submit-btn {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            border: none;
-            background-color: var(--primary);
-            color: white;
-            font-weight: 600;
-            font-size: 1.125rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            grid-column: span 2;
+        .media-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
         }
 
-        button.submit-btn:hover {
-            background-color: var(--primary-hover);
+        .submit-btn {
+            grid-column: span 2;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
         }
 
         .error-msg {
+            grid-column: span 2;
+            background: rgba(248, 113, 113, 0.1);
             color: var(--error);
-            font-size: 0.875rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
             text-align: center;
             margin-top: 1rem;
-            grid-column: span 2;
+        }
+
+        .footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 640px) {
+
+            .form-grid,
+            .media-section {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+
+            .submit-btn {
+                grid-column: auto;
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h2>Smart Door Registration</h2>
+        <div class="header">
+            <div class="logo">🛡️</div>
+            <h2>Create Account</h2>
+        </div>
+
         <form method="POST" enctype="multipart/form-data" id="regForm" class="form-grid">
             {% csrf_token %}
 
             <div class="form-group">
                 <label>Username</label>
-                <input type="text" name="username" placeholder="Pick a username" required>
+                <div class="input-container">
+                    <i data-lucide="user"></i>
+                    <input type="text" name="username" placeholder="Pick a username" required>
+                </div>
             </div>
 
             <div class="form-group">
                 <label>Full Name</label>
-                <input type="text" name="full_name" placeholder="Your full name" required>
+                <div class="input-container">
+                    <i data-lucide="at-sign"></i>
+                    <input type="text" name="full_name" placeholder="Your full name" required>
+                </div>
             </div>
 
             <div class="form-group">
                 <label>Email Address</label>
-                <input type="email" name="email" placeholder="example@mail.com" required>
+                <div class="input-container">
+                    <i data-lucide="mail"></i>
+                    <input type="email" name="email" placeholder="example@mail.com" required>
+                </div>
             </div>
 
             <div class="form-group">
                 <label>Phone Number</label>
-                <input type="tel" name="phone_number" placeholder="+1234567890" required>
+                <div class="input-container">
+                    <i data-lucide="phone"></i>
+                    <input type="tel" name="phone_number" placeholder="+1234567890" required>
+                </div>
             </div>
 
             <div class="form-group full-width">
                 <label>Address</label>
-                <textarea name="address" rows="1" placeholder="Your residential address" required></textarea>
+                <div class="input-container">
+                    <i data-lucide="map-pin" style="top: 1.3rem;"></i>
+                    <textarea name="address" rows="1" placeholder="Your residential address" required
+                        style="padding-left: 3rem;"></textarea>
+                </div>
             </div>
 
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password" placeholder="••••••••" required>
+                <div class="input-container">
+                    <i data-lucide="lock"></i>
+                    <input type="password" name="password" id="password" placeholder="••••••••" required>
+                    <button type="button" class="password-toggle" onclick="togglePassword('password', 'eye-pw')">
+                        <i data-lucide="eye" id="eye-pw"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="form-group">
                 <label>Confirm Password</label>
-                <input type="password" name="confirm" placeholder="••••••••" required>
+                <div class="input-container">
+                    <i data-lucide="lock"></i>
+                    <input type="password" name="confirm" id="confirm" placeholder="••••••••" required>
+                    <button type="button" class="password-toggle" onclick="togglePassword('confirm', 'eye-conf')">
+                        <i data-lucide="eye" id="eye-conf"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="media-section">
-                <!-- Face Registration -->
+            <div class="media-section full-width">
                 <div class="media-container" id="faceContainer">
                     <label>📸 Face Registry</label>
                     <div class="preview-box">
@@ -232,11 +346,10 @@
                     <input type="file" name="profile_image" id="profile_image" hidden>
                 </div>
 
-                <!-- Voice Registration -->
                 <div class="media-container" id="voiceContainer">
                     <label>🎤 Voice Registry</label>
                     <div class="preview-box"
-                        style="display: flex; align-items: center; justify-content: center; background: #1e293b;">
+                        style="display: flex; align-items: center; justify-content: center; background: #000;">
                         <span id="voiceStatus" style="font-size: 3rem;">🎤</span>
                     </div>
                     <button type="button" class="media-btn" id="voiceBtn" onclick="toggleVoice()">START
@@ -245,15 +358,34 @@
                 </div>
             </div>
 
-            <button type="submit" class="submit-btn" id="submitBtn">Create Account</button>
-
             {% if error %}
             <div class="error-msg">{{ error }}</div>
             {% endif %}
+
+            <button type="submit" class="submit-btn" id="submitBtn">Create Account</button>
         </form>
+
+        <div class="footer">
+            Already have an account? <a href="{% url 'login' %}">Log In</a>
+        </div>
     </div>
 
     <script>
+        lucide.createIcons();
+
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+
         const webcam = document.getElementById('webcam');
         const facePreview = document.getElementById('facePreview');
         const faceBtn = document.getElementById('faceBtn');
@@ -274,7 +406,7 @@
         async function toggleCamera() {
             if (!isCamOpen) {
                 try {
-                    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                    stream = await navigator.mediaDevices.getUserMedia({ video: true });
                     webcam.srcObject = stream;
                     webcam.style.display = 'block';
                     facePreview.style.display = 'none';
@@ -314,27 +446,28 @@
 
         async function toggleVoice() {
             if (!isRecording) {
-                if (!stream) {
-                    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                try {
+                    const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    chunks = [];
+                    recorder = new MediaRecorder(audioStream);
+                    recorder.ondataavailable = e => chunks.push(e.data);
+                    recorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'audio/wav' });
+                        const file = new File([blob], "voice.wav", { type: "audio/wav" });
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.items.add(file);
+                        voiceInput.files = dataTransfer.files;
+                        voiceStatus.innerText = '✅';
+                        voiceContainer.classList.add('ready');
+                    };
+                    recorder.start();
+                    voiceBtn.innerText = 'STOP RECORDING';
+                    voiceBtn.classList.add('stop');
+                    voiceStatus.innerText = '🔴';
+                    isRecording = true;
+                } catch (e) {
+                    alert("Microphone access denied");
                 }
-                chunks = [];
-                recorder = new MediaRecorder(stream);
-                recorder.ondataavailable = e => chunks.push(e.data);
-                recorder.onstop = () => {
-                    const blob = new Blob(chunks, { type: 'audio/wav' });
-                    const file = new File([blob], "voice.wav", { type: "audio/wav" });
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    voiceInput.files = dataTransfer.files;
-
-                    voiceStatus.innerText = '✅';
-                    voiceContainer.classList.add('ready');
-                };
-                recorder.start();
-                voiceBtn.innerText = 'STOP RECORDING';
-                voiceBtn.classList.add('stop');
-                voiceStatus.innerText = '🔴';
-                isRecording = true;
             } else {
                 recorder.stop();
                 voiceBtn.innerText = 'RERECORD';
