@@ -11,4 +11,8 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('profile/edit/', views.edit_profile, name='edit_profile'),
     path('verify-biometrics/', views.verify_biometrics, name='verify_biometrics'),
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('approve-user/<int:user_id>/', views.approve_user, name='approve_user'),
+    path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('door-unlocked/', views.door_unlocked, name='door_unlocked'),
 ]

@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clearance Granted - Smart Door</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-glow: rgba(0, 255, 136, 0.4);
+            --bg: #000000;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        .door-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{% static 'images/door_open.png' %}") no-repeat center center;
+            background-size: cover;
+            filter: brightness(0.3) saturate(0.5);
+            z-index: -1;
+            animation: kenBurns 15s infinite alternate ease-in-out;
+        }
+
+        @keyframes kenBurns {
+            from {
+                transform: scale(1);
+                filter: brightness(0.2);
+            }
+
+            to {
+                transform: scale(1.1);
+                filter: brightness(0.4);
+            }
+        }
+
+        .success-card {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            padding: 5rem;
+            border-radius: 3rem;
+            text-align: center;
+            max-width: 550px;
+            width: 90%;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 255, 136, 0.1);
+            animation: entry 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes entry {
+            from {
+                opacity: 0;
+                transform: translateY(60px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .icon-wrapper {
+            width: 130px;
+            height: 130px;
+            background: rgba(0, 255, 136, 0.05);
+            border: 2px solid var(--primary);
+            border-radius: 2.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 2.5rem;
+            box-shadow: 0 0 40px var(--primary-glow);
+            animation: pulse-glow 2s infinite;
+            transform: rotate(-5deg);
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 0 20px var(--primary-glow);
+                border-color: var(--primary);
+            }
+
+            50% {
+                box-shadow: 0 0 50px rgba(0, 255, 136, 0.6);
+                border-color: #fff;
+            }
+
+            100% {
+                box-shadow: 0 0 20px var(--primary-glow);
+                border-color: var(--primary);
+            }
+        }
+
+        h1 {
+            font-weight: 600;
+            letter-spacing: -1px;
+            margin: 0 0 0.5rem;
+            font-size: 3rem;
+            background: linear-gradient(to right, #ffffff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.75rem;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 2rem;
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2.5rem;
+        }
+
+        .progress-line {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 4rem;
+        }
+
+        .progress-inner {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+            animation: fillProgress 3s linear forwards;
+        }
+
+        @keyframes fillProgress {
+            to {
+                width: 100%;
+            }
+        }
+
+        .loading-text {
+            font-size: 0.7rem;
+            color: #444;
+            margin-top: 1.25rem;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="door-background"></div>
+
+    <div class="success-card">
+        <div class="icon-wrapper">
+            <i data-lucide="unlock" style="width: 50px; height: 50px; color: var(--primary);"></i>
+        </div>
+        <div class="status-badge">Neural Match Confirmed</div>
+        <h1>ACCESS GRANTED</h1>
+        <p style="color: #94a3b8; line-height: 1.8; font-size: 1.1rem;">
+            Welcome back, <span style="color: #fff; font-weight: 600;">{{ user.full_name }}</span>.<br>
+            Terminal protocols disengaged. Main entrance is now accessible.
+        </p>
+
+        <div class="progress-line">
+            <div class="progress-inner"></div>
+        </div>
+        <span class="loading-text">Transferring to Command Dashboard...</span>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        setTimeout(() => {
+            window.location.href = "{% url 'dashboard' %}";
+        }, 3000);
+    </script>
+</body>
+
+</html>

@@ -9,12 +9,15 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --text: #f8fafc;
+            --primary: #00ff88;
+            --primary-hover: #00e67a;
+            --bg: #000000;
+            --card-bg: rgba(10, 10, 10, 0.82);
+            --text: #ffffff;
             --text-muted: #94a3b8;
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --border: rgba(0, 255, 136, 0.2);
+            --glow: 0 0 20px rgba(0, 255, 136, 0.1);
         }
 
         body {
@@ -26,37 +29,49 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: radial-gradient(circle at top right, #1e293b, #0f172a);
         }
 
         .login-card {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2.5rem;
-            border-radius: 1.5rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: 3rem;
+            border-radius: 2rem;
             width: 100%;
-            max-width: 400px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), var(--glow);
+            animation: slideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .logo {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            display: inline-block;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px var(--primary));
         }
 
         h2 {
             font-size: 1.75rem;
             font-weight: 600;
             margin: 0;
-            background: linear-gradient(to right, #6366f1, #a855f7);
+            background: linear-gradient(to right, #ffffff, var(--primary));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -69,24 +84,25 @@
         }
 
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
             position: relative;
         }
 
         .form-group i {
             position: absolute;
-            left: 1rem;
+            left: 1.25rem;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             pointer-events: none;
+            transition: color 0.3s;
         }
 
         .password-toggle {
             position: absolute;
-            right: 1rem;
+            right: 1.25rem;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
@@ -94,14 +110,12 @@
             border: none;
             padding: 0;
             cursor: pointer;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: color 0.2s;
-            margin-top: 0 !important;
-            /* Override button margin */
         }
 
         .password-toggle:hover {
@@ -110,59 +124,79 @@
 
         input {
             width: 100%;
-            padding: 0.875rem 3rem 0.875rem 3rem;
-            background: rgba(15, 23, 42, 0.6);
+            padding: 1rem 3.5rem 1rem 3.5rem;
+            background: var(--input-bg);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             color: white;
             font-size: 1rem;
-            transition: all 0.2s;
+            transition: all 0.3s;
             box-sizing: border-box;
         }
 
         input:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(15, 23, 42, 0.8);
-            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
         }
 
-        button {
+        input:focus+i {
+            color: var(--primary);
+        }
+
+        button[type="submit"] {
             width: 100%;
-            padding: 0.875rem;
+            padding: 1rem;
             background-color: var(--primary);
-            color: white;
+            color: #000;
             border: none;
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        button:hover {
+        button[type="submit"]:hover {
             background-color: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        button:active {
-            transform: translateY(0);
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
         }
 
         .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
             color: #f87171;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
+            padding: 1rem;
+            border-radius: 1rem;
             font-size: 0.875rem;
             margin-bottom: 1.5rem;
             text-align: center;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
         }
 
         .footer {
-            margin-top: 1.5rem;
+            margin-top: 2rem;
             text-align: center;
             font-size: 0.875rem;
             color: var(--text-muted);
@@ -172,10 +206,12 @@
             color: var(--primary);
             text-decoration: none;
             font-weight: 600;
+            transition: all 0.2s;
         }
 
         .footer a:hover {
             text-decoration: underline;
+            text-shadow: 0 0 8px var(--primary);
         }
     </style>
 </head>
@@ -184,8 +220,8 @@
     <div class="login-card">
         <div class="header">
             <div class="logo">🛡️</div>
-            <h2>Welcome Back</h2>
-            <p class="subtitle">Securely access your Smart Door</p>
+            <h2>Personnel Auth</h2>
+            <p class="subtitle">Access protocol required for entry</p>
         </div>
 
         {% if error %}
@@ -198,21 +234,21 @@
             {% csrf_token %}
             <div class="form-group">
                 <i data-lucide="user"></i>
-                <input type="text" name="username" placeholder="Username" required>
+                <input type="text" name="username" placeholder="Access ID" required>
             </div>
             <div class="form-group">
                 <i data-lucide="lock"></i>
-                <input type="password" name="password" id="password" placeholder="Password" required>
+                <input type="password" name="password" id="password" placeholder="Passcode" required>
                 <button type="button" class="password-toggle" onclick="togglePassword()"
                     aria-label="Toggle password visibility">
                     <i data-lucide="eye" id="eye-icon"></i>
                 </button>
             </div>
-            <button type="submit">Login to Account</button>
+            <button type="submit">Authorize Entry</button>
         </form>
 
         <div class="footer">
-            Don't have an account? <a href="{% url 'register' %}">Sign Up</a>
+            New personnel? <a href="{% url 'register' %}">Initialize Account</a>
         </div>
     </div>
 

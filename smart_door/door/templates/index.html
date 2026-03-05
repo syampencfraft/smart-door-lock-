@@ -8,11 +8,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
+            --primary: #00ff88;
+            --primary-hover: #00e67a;
+            --bg: #000000;
+            --card-bg: rgba(10, 10, 10, 0.8);
+            --text: #ffffff;
+            --text-muted: #94a3b8;
+            --border: rgba(0, 255, 136, 0.2);
+            --glow: 0 0 20px rgba(0, 255, 136, 0.3);
         }
 
         body {
@@ -25,30 +28,80 @@
             align-items: center;
             min-height: 100vh;
             text-align: center;
+            overflow: hidden;
         }
 
         .container {
             max-width: 800px;
-            padding: 2rem;
+            padding: 3rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), var(--glow);
+            animation: fadeIn 1s ease-out;
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), transparent, var(--primary));
+            border-radius: 2rem;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .logo {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 10px var(--primary));
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px var(--primary));
+            }
+
+            to {
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 20px var(--primary));
+            }
         }
 
         h1 {
             font-size: 3.5rem;
             font-weight: 600;
-            margin: 0 0 1.5rem;
-            background: linear-gradient(to right, #6366f1, #a855f7);
+            margin: 0 0 1rem;
+            background: linear-gradient(to right, #ffffff, var(--primary));
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
         }
 
         p {
             font-size: 1.25rem;
-            color: #94a3b8;
+            color: var(--text-muted);
             margin-bottom: 3rem;
             line-height: 1.6;
         }
@@ -65,28 +118,33 @@
             font-weight: 600;
             text-decoration: none;
             font-size: 1.125rem;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .btn-primary {
             background-color: var(--primary);
-            color: white;
-            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
         }
 
         .btn-primary:hover {
             background-color: var(--primary-hover);
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);
         }
 
         .btn-secondary {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
         }
 
         .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 255, 136, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
         }
     </style>
 </head>
@@ -95,10 +153,10 @@
     <div class="container">
         <div class="logo">🛡️</div>
         <h1>SmartDoor Security</h1>
-        <p>Advanced biometric protection for your home.<br>Experience the future of secure, keyless entry.</p>
+        <p>Elite biometric protection for the modern home.<br>Safe. Secure. Seamless.</p>
         <div class="cta-group">
-            <a href="{% url 'login' %}" class="btn btn-primary">Login Now</a>
-            <a href="{% url 'register' %}" class="btn btn-secondary">Create Account</a>
+            <a href="{% url 'login' %}" class="btn btn-primary">Enter System</a>
+            <a href="{% url 'register' %}" class="btn btn-secondary">Initialize Access</a>
         </div>
     </div>
 </body>

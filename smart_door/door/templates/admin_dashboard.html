@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Command Center - Smart Door</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-hover: #00e67a;
+            --bg: #000000;
+            --card-bg: rgba(10, 10, 10, 0.8);
+            --text: #ffffff;
+            --text-muted: #94a3b8;
+            --success: #00ff88;
+            --error: #f87171;
+            --warning: #f59e0b;
+            --border: rgba(0, 255, 136, 0.1);
+            --glow: 0 0 20px rgba(0, 255, 136, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 3rem 4rem;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(to right, #ffffff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: -1px;
+        }
+
+        .admin-pill {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.6rem 1.25rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 3rem;
+            border: 1px solid var(--border);
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .logout-btn {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+            color: var(--error);
+            padding: 0.5rem 1.25rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logout-btn:hover {
+            background: var(--error);
+            color: #000;
+            box-shadow: 0 0 15px rgba(248, 113, 113, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: var(--glow);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .stat-info h3 {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-info p {
+            margin: 0.25rem 0 0;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            margin-bottom: 3rem;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .section-header {
+            padding: 2rem 2.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 1.25rem 2.5rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        td {
+            padding: 1.5rem 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 0.95rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid var(--border);
+        }
+
+        .status-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .status-approved {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn-action {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .btn-approve:hover {
+            background: var(--success);
+            color: #000;
+            border-color: var(--success);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .btn-delete:hover {
+            background: var(--error);
+            color: #000;
+            border-color: var(--error);
+            box-shadow: 0 0 15px rgba(248, 113, 113, 0.2);
+        }
+
+        .alert-row {
+            transition: all 0.3s;
+        }
+
+        .alert-row:hover {
+            background: rgba(248, 113, 113, 0.02);
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                padding: 2rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🛡️ Tactical Command</h1>
+        <div style="display: flex; align-items: center; gap: 2rem;">
+            <div class="admin-pill">
+                <i data-lucide="shield" style="color: var(--primary); width: 20px;"></i>
+                <span style="font-weight: 600;">{{ admin.username }}</span>
+            </div>
+            <button class="logout-btn" onclick="window.location.href='{% url 'logout' %}'">Terminate Session</button>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i data-lucide="users"></i></div>
+            <div class="stat-info">
+                <h3>Total Personnel</h3>
+                <p>{{ users|length }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="color: var(--warning); background: rgba(245, 158, 11, 0.1);"><i
+                    data-lucide="user-plus"></i></div>
+            <div class="stat-info">
+                <h3>Pending Enrollment</h3>
+                <p id="pending-count">{{ users|dictsort:"is_approved"|length }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="color: var(--error); background: rgba(248, 113, 113, 0.1);"><i
+                    data-lucide="shield-alert"></i></div>
+            <div class="stat-info">
+                <h3>Security Incidents</h3>
+                <p>{{ notifications|length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-header">
+            <h2><i data-lucide="list"></i> Personnel Directory</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Personnel</th>
+                    <th>Contact Vectors</th>
+                    <th>Status</th>
+                    <th>Command Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                {% if not user.is_admin %}
+                <tr id="user-row-{{ user.id }}">
+                    <td>
+                        <div class="user-info">
+                            {% if user.profile_image %}
+                            <img src="{{ user.profile_image.url }}" class="user-avatar">
+                            {% else %}
+                            <div class="user-avatar"
+                                style="display: flex; align-items: center; justify-content: center; background: #1a1a1a;">
+                                <i data-lucide="user"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <div style="font-weight: 600;">{{ user.full_name }}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">ID: @{{ user.username }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-size: 0.9rem;">{{ user.email }}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">{{
+                            user.phone_number }}</div>
+                    </td>
+                    <td>
+                        <span
+                            class="status-badge {% if user.is_approved %}status-approved{% else %}status-pending{% endif %}"
+                            id="status-{{ user.id }}">
+                            {% if user.is_approved %}Active{% else %}Restricted{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-action btn-approve" title="Toggle Access"
+                                onclick="toggleApproval('{{ user.id }}')">
+                                <i data-lucide="shield-check"></i>
+                            </button>
+                            <button class="btn-action btn-delete" title="Purge Personnel"
+                                onclick="deleteUser('{{ user.id }}')">
+                                <i data-lucide="trash-2"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-card" style="border-color: rgba(248, 113, 113, 0.2);">
+        <div class="section-header" style="background: rgba(248, 113, 113, 0.05);">
+            <h2 style="color: var(--error);"><i data-lucide="activity"></i> Perimeter Breach Logs</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Identified Target</th>
+                    <th>Auth Vector</th>
+                    <th>Breach Details</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if notifications %}
+                {% for n in notifications %}
+                <tr class="alert-row">
+                    <td>
+                        <div class="user-info">
+                            {% if n.user.profile_image %}
+                            <img src="{{ n.user.profile_image.url }}" class="user-avatar"
+                                style="border-color: var(--error);">
+                            {% else %}
+                            <div class="user-avatar"
+                                style="display: flex; align-items: center; justify-content: center; background: #1a1a1a; border-color: var(--error);">
+                                <i data-lucide="user" style="color: var(--error);"></i>
+                            </div>
+                            {% endif %}
+                            <div>
+                                <div style="font-weight: 600;">{{ n.user.full_name }}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Account Target</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div
+                            style="display: flex; align-items: center; gap: 0.5rem; text-transform: uppercase; font-size: 0.75rem; font-weight: 600;">
+                            {% if n.auth_type == 'face' %}
+                            <i data-lucide="scan" style="width: 16px; color: var(--primary);"></i> Optical
+                            {% else %}
+                            <i data-lucide="mic" style="width: 16px; color: var(--primary);"></i> Acoustic
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="color: var(--error); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.5px;">
+                            UNAUTHORIZED ACCESS ATTEMPT</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">{{ n.message }}
+                        </div>
+                    </td>
+                    <td style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted);">{{
+                        n.timestamp|timesince }} ago</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 5rem; color: var(--text-muted);">
+                        <i data-lucide="check-circle"
+                            style="width: 48px; height: 48px; margin-bottom: 1.5rem; opacity: 0.3; color: var(--primary);"></i>
+                        <p style="font-size: 1.1rem; letter-spacing: 1px;">PERIMETER SECURE - NO BREACHES DETECTED</p>
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        async function toggleApproval(userId) {
+            const res = await fetch(`/approve-user/${userId}/`, {
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            }).then(r => r.json());
+
+            if (res.success) {
+                const badge = document.getElementById(`status-${userId}`);
+                if (res.is_approved) {
+                    badge.innerText = 'Active';
+                    badge.className = 'status-badge status-approved';
+                } else {
+                    badge.innerText = 'Restricted';
+                    badge.className = 'status-badge status-pending';
+                }
+                // Update pending count if necessary
+                location.reload();
+            }
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm('CONFIRM PERSONNEL PURGE: This action is irreversible.')) return;
+
+            const res = await fetch(`/delete-user/${userId}/`, {
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            }).then(r => r.json());
+
+            if (res.success) {
+                document.getElementById(`user-row-${userId}`).remove();
+                location.reload();
+            }
+        }
+    </script>
+</body>
+
+</html>
